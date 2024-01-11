@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JSONP Example</title>
+</head>
+    <body>
+        
+        <script src="https://cdn.jsdelivr.net/npm/onnxjs@0.1.8/dist/onnx.min.js"></script>
+        <script>
+            console.log("hi")
+            async function test() {
+                const sess = new onnx.InferenceSession()
+                console.log("session started")
+                await sess.loadModel('./onnx_model.onnx')
+                console.log("model_loaded")
+                const input = new onnx.Tensor(new Float32Array(28*28), 'float32', [1,1,28,28])
+                const outputMap = await sess.run([input])
+                const outputTensor = outputMap.values().next().value
+                console.log(`Output tensor: ${outputTensor.data}`)
+            }
+            test()
+        </script>
+    </body>
+</html>
