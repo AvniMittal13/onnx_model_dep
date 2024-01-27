@@ -1,0 +1,57 @@
+<html>
+  <head> </head>
+
+  <body>
+    <!-- Load ONNX Runtime Web -->
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    <!-- Code that consume ONNX Runtime Web -->
+    <script>
+      async function runMyModel() {
+        // create a session
+        const myOrtSession = await ort.InferenceSession.create(
+          // "onnx_model3.onnx"
+          "onnx_models\\liver\\3_32_64_128\\nca_model_liver0.onnx"
+        );
+        // generate model input
+        // const input0 = new ort.Tensor(
+        //   new Float32Array(32*32) /* data */,
+        //   [1,1,32,32] /* dims */
+        // );
+
+        const input0 = new ort.Tensor(
+          new Float32Array(32*32*20*16),
+          [1, 32, 32, 20, 16]
+        )
+
+        // const f2 = new ort.Tensor(TensorProto.DataType.FLOAT64, (1,0))
+        // f2.data = 0.5
+        dataB = [0.5]
+        const f2 = new ort.Tensor('float64', dataB, [1]);
+        //  const f2  = ort.number(0.5, 'float64')
+        // const fr = new ort.Tensor(new number[0.5], 'float64')
+
+        // execute the model
+        // input_name = myOrtSession.get_inputs()[0].name
+
+        // const outputs = await myOrtSession.run({ 'input.1': input0 });
+        const outputs = await myOrtSession.run({
+          'x.1': input0,
+          'fire_rate' : f2
+        })
+        // consume the output
+        // const outputTensor = outputs["17"];
+        const outputTensor = outputs["797"]
+        console.log(`model output : ${outputTensor}`)
+        console.log(`model output tensor: ${outputTensor.data}.`);
+
+        const keys = Object.keys(outputTensor);
+        console.log(keys);
+
+        // dims, type, data, size
+
+        console.log(`${outputTensor.dims}, ${outputTensor.type}, ${outputTensor.size}`)
+      }
+      runMyModel();
+    </script>
+  </body>
+</html>

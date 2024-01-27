@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+//
+<!-- Test: Typical fullscreen usage; autoload an image and overlay. -->
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script> -->
+    <!-- <script src="iota.js"></script> -->
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/gh/stdlib-js/ndarray@esm/index.mjs"></script> -->
+    <!-- <script type="module">
+      // import objectKeys from 'https://cdn.jsdelivr.net/gh/stdlib-js/utils/keys@esm/index.mjs';
+      import ns from "https://cdn.jsdelivr.net/gh/stdlib-js/ndarray@esm/index.mjs";
+
+      // console.log(  ns  );
+    </script> -->
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ndarray/1.0.19/ndarray.min.js" integrity="sha512-ZmPsy6T3xCmO1PB25E7jFYx6mTC655VGypAvJJdgKBBFA77x4e455fmU0XHqMtNaguAJqjgulqU95gL81xkzdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+
+    <!-- <script type="text/javascript" src="./nifti-reader-min.js"></script> -->
+    <!-- <script type = "module" src="try.js"></script> -->
+    <!-- <script type="text/javascript">
+      import ns from "https://cdn.jsdelivr.net/gh/stdlib-js/ndarray@esm/index.mjs";
+      console.log(ns);
+
+      function readNIFTI(name, data) {
+        if (nifti.isCompressed(data)) {
+          data = nifti.decompress(data);
+        }
+        var niftiHeader = nifti.readHeader(data);
+        console.log(niftiHeader.dims);
+        console.log(
+          niftiHeader.dims[1],
+          niftiHeader.dims[2],
+          niftiHeader.dims[3]
+        );
+        // console.log(niftiHeader["Image Dimensions (1-8)"])
+        console.log(niftiHeader.toFormattedString());
+        niftiImage = nifti.readImage(niftiHeader, data);
+        console.log(niftiImage);
+        const dataArray = new Int8Array(niftiImage);
+        console.log(dataArray);
+        console.log(dataArray.length);
+
+        const array2D = ns.ndarray(dataArray, [
+          niftiHeader.dims[1],
+          niftiHeader.dims[2],
+          niftiHeader.dims[3],
+        ]);
+        console.log(array2D);
+
+        // if (nifti.hasExtension(niftiHeader)) {
+        //     niftiExt = nifti.readExtensionData(niftiHeader, data);
+        //     console.log(niftiExt)
+        // }
+
+        var logger = document.getElementById("results");
+        logger.innerText = niftiHeader.toFormattedString();
+      }
+
+      function makeSlice(file, start, length) {
+        var fileType = typeof File;
+
+        if (fileType === "undefined") {
+          return function () {};
+        }
+
+        if (File.prototype.slice) {
+          return file.slice(start, start + length);
+        }
+
+        if (File.prototype.mozSlice) {
+          return file.mozSlice(start, length);
+        }
+
+        if (File.prototype.webkitSlice) {
+          return file.webkitSlice(start, length);
+        }
+
+        return null;
+      }
+
+      function readFile(file) {
+        console.log(file.size);
+        // var blob = makeSlice(file, 0, file.size);
+
+        var reader = new FileReader();
+
+        reader.onloadend = function (evt) {
+          if (evt.target.readyState === FileReader.DONE) {
+            readNIFTI(file.name, evt.target.result);
+          }
+        };
+
+        reader.readAsArrayBuffer(file);
+      }
+
+      function handleFileSelect(evt) {
+        var files = evt.target.files;
+        readFile(files[0]);
+      } -->
+    <!-- </script> -->
+
+    <title>NIFTI-Reader-JS Test</title>
+  </head>
+
+  <body>
+    <div id="select" style="font-family: sans-serif">
+      <h3>NIFTI-Reader-JS &mdash; JavaScript NIFTI Reader</h3>
+      <h4>
+        <a href="https://github.com/rii-mango/NIFTI-Reader-JS"
+          >https://github.com/rii-mango/NIFTI-Reader-JS
+        </a>
+      </h4>
+      <p>Select a file: <input type="file" id="file" name="files" /></p>
+      <hr />
+    </div>
+
+    <div id="results" style="font-family: sans-serif"></div>
+
+    <script type="module">
+      // import { handleFileSelect } from './try.js';
+      import ns from "https://cdn.jsdelivr.net/gh/stdlib-js/ndarray@esm/index.mjs";
+      import "./nifti-reader-min.js";
+      console.log(nifti);
+      console.log(ns);
+
+      function readNIFTI(name, data) {
+        if (nifti.isCompressed(data)) {
+          data = nifti.decompress(data);
+        }
+        var niftiHeader = nifti.readHeader(data);
+        console.log(niftiHeader.dims);
+        console.log(
+          niftiHeader.dims[1],
+          niftiHeader.dims[2],
+          niftiHeader.dims[3]
+        );
+        // console.log(niftiHeader["Image Dimensions (1-8)"])
+        console.log(niftiHeader.toFormattedString());
+        var niftiImage = nifti.readImage(niftiHeader, data);
+        console.log(niftiImage);
+        const dataArray = new Int8Array(niftiImage);
+        console.log(dataArray);
+        console.log(dataArray.length);
+
+        const array2D = ns.ndarray('int8',dataArray,[niftiHeader.dims[1],niftiHeader.dims[2],niftiHeader.dims[3]], [1,1,1], 0, 'row-major');
+        console.log(array2D);
+
+        console.log(array2D.get(4,2,2))
+
+        // if (nifti.hasExtension(niftiHeader)) {
+        //     niftiExt = nifti.readExtensionData(niftiHeader, data);
+        //     console.log(niftiExt)
+        // }
+
+        var logger = document.getElementById("results");
+        logger.innerText = niftiHeader.toFormattedString();
+      }
+
+      function makeSlice(file, start, length) {
+        var fileType = typeof File;
+
+        if (fileType === "undefined") {
+          return function () {};
+        }
+
+        if (File.prototype.slice) {
+          return file.slice(start, start + length);
+        }
+
+        if (File.prototype.mozSlice) {
+          return file.mozSlice(start, length);
+        }
+
+        if (File.prototype.webkitSlice) {
+          return file.webkitSlice(start, length);
+        }
+
+        return null;
+      }
+
+      function readFile(file) {
+        console.log(file.size);
+        // var blob = makeSlice(file, 0, file.size);
+
+        var reader = new FileReader();
+
+        reader.onloadend = function (evt) {
+          if (evt.target.readyState === FileReader.DONE) {
+            readNIFTI(file.name, evt.target.result);
+          }
+        };
+
+        reader.readAsArrayBuffer(file);
+      }
+
+      function handleFileSelect(evt) {
+        var files = evt.target.files;
+        readFile(files[0]);
+      }
+
+      document
+        .getElementById("file")
+        .addEventListener("change", handleFileSelect, false);
+    </script>
+  </body>
+</html>

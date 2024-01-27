@@ -5,14 +5,113 @@
     <title>JSONP Example</title>
 </head>
     <body>
+        <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>  
         
-        <script src="https://cdn.jsdelivr.net/npm/onnxjs@0.1.8/dist/onnx.min.js"></script>
+            <!-- <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/build/onnxruntime-web.min.js"></script> -->            
+<script>
+    // Define the path to your ONNX model file
+    const modelPath = 'onnx_model.onnx';
+
+    // Load the model
+    ort.onnx().then((onnx) => {
+        const session = new onnx.InferenceSession();
+        return session.loadModel(modelPath);
+    }).then(() => {
+        console.log('Model loaded successfully');
+
+        // Prepare input data (replace this with your actual input data)
+        const inputData = new Float32Array(28*28);
+
+        // Create an input tensor
+        const inputTensor = new ort.Tensor('float32', [1,1,28,28], inputData);
+
+        // Run inference
+        return session.run([inputTensor]);
+    }).then((output) => {
+        // Process the output tensor (replace this with your actual post-processing logic)
+        const outputData = output.values().next().value.data;
+
+        // Display the result
+        console.log('Inference result:', outputData);
+    }).catch((error) => {
+        console.error('Error during inference:', error);
+    });
+ </script>
+<!-- //         <script>
+//             // Define the path to your ONNX model file
+//             const modelPath = 'onnx_model.onnx';
+
+//             // Load the model
+//             const session = new onnx.InferenceSession();
+//             session.loadModel(modelPath).then(() => {
+//                 console.log('Model loaded successfully');
+
+//                 // Prepare input data (replace this with your actual input data)
+//                 const inputData = new Float32Array(28*28);
+
+//                 // Create an input tensor
+//                 const inputTensor = new onnx.Tensor(inputData, 'float32', [1,1,28,28]);
+
+//                 // Run inference
+//                 session.run([inputTensor]).then((output) => {
+//                     // Process the output tensor (replace this with your actual post-processing logic)
+//                     const outputData = output.values().next().value.data;
+
+//                     // Display the result
+//                     console.log('Inference result:', outputData);
+//                 }).catch((error) => {
+//                     console.error('Error during inference:', error);
+//                 });
+//             }).catch((error) => {
+//                 console.error('Error loading model:', error);
+//             });
+</script> -->
+        
+        <!-- <script>
+            const onnxModelURL = 'onnx_model.onnx';
+            // Profiling shows that wasm is faster than webgl for small neural networks such as the one for mnist.
+            const sessionOption = { executionProviders: ['wasm', 'webgl'] };
+            var inferenceSession;
+            async function createInferenceSession(onnxModelURL, sessionOption) 
+            {
+                try {
+                    inferenceSession = await ort.InferenceSession.create(onnxModelURL, sessionOption);
+                } catch (e) {
+                    console.log(`failed to load ONNX model: ${e}.`);
+                }
+            }
+            // Load model and create inference session once.
+            createInferenceSession(onnxModelURL, sessionOption);
+            async function runMnistInference(inputDataArray, inferenceSession) {
+                try {
+                    // create a new session and load the specific model.
+                    // the model in this example contains a single MatMul node
+                    // prepare inputs. a tensor need its corresponding TypedArray as data
+                    const inputData = Float32Array.from(inputDataArray);
+                    const inputTensor = new ort.Tensor('float32', inputData, [1, 1, 28, 28]);
+                    // prepare feeds. use model input names as keys.
+                    const feeds = { Input3: inputTensor };
+                    // feed inputs and run
+                    const results = await inferenceSession.run(feeds);
+                    // read from results
+                    const outputData = results.Plus214_Output_0.data;
+                } catch (e) {
+                    console.log(`failed to inference ONNX model: ${e}.`);
+                }
+            }
+            const input = 
+            runMnistInference(inferenceSession)
+
+        </script> -->
+
+
+        <!-- <script src="https://cdn.jsdelivr.net/npm/onnxjs/dist/onnx.min.js"></script>
         <script>
             console.log("hi")
             async function test() {
                 const sess = new onnx.InferenceSession()
                 console.log("session started")
-                await sess.loadModel('./onnx_model.onnx')
+                await sess.loadModel('onnx_model.onnx')
                 console.log("model_loaded")
                 const input = new onnx.Tensor(new Float32Array(28*28), 'float32', [1,1,28,28])
                 const outputMap = await sess.run([input])
@@ -20,6 +119,6 @@
                 console.log(`Output tensor: ${outputTensor.data}`)
             }
             test()
-        </script>
+        </script> -->
     </body>
 </html>
