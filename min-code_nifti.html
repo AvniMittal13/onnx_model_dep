@@ -6,103 +6,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-    <!-- <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script> -->
-    <!-- <script src="iota.js"></script> -->
-    <!-- <script type="module" src="https://cdn.jsdelivr.net/gh/stdlib-js/ndarray@esm/index.mjs"></script> -->
-    <!-- <script type="module">
-      // import objectKeys from 'https://cdn.jsdelivr.net/gh/stdlib-js/utils/keys@esm/index.mjs';
-      import ns from "https://cdn.jsdelivr.net/gh/stdlib-js/ndarray@esm/index.mjs";
-
-      // console.log(  ns  );
-    </script> -->
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ndarray/1.0.19/ndarray.min.js" integrity="sha512-ZmPsy6T3xCmO1PB25E7jFYx6mTC655VGypAvJJdgKBBFA77x4e455fmU0XHqMtNaguAJqjgulqU95gL81xkzdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-
-    <!-- <script type="text/javascript" src="./nifti-reader-min.js"></script> -->
-    <!-- <script type = "module" src="try.js"></script> -->
-    <!-- <script type="text/javascript">
-      import ns from "https://cdn.jsdelivr.net/gh/stdlib-js/ndarray@esm/index.mjs";
-      console.log(ns);
-
-      function readNIFTI(name, data) {
-        if (nifti.isCompressed(data)) {
-          data = nifti.decompress(data);
-        }
-        var niftiHeader = nifti.readHeader(data);
-        console.log(niftiHeader.dims);
-        console.log(
-          niftiHeader.dims[1],
-          niftiHeader.dims[2],
-          niftiHeader.dims[3]
-        );
-        // console.log(niftiHeader["Image Dimensions (1-8)"])
-        console.log(niftiHeader.toFormattedString());
-        niftiImage = nifti.readImage(niftiHeader, data);
-        console.log(niftiImage);
-        const dataArray = new Int8Array(niftiImage);
-        console.log(dataArray);
-        console.log(dataArray.length);
-
-        const array2D = ns.ndarray(dataArray, [
-          niftiHeader.dims[1],
-          niftiHeader.dims[2],
-          niftiHeader.dims[3],
-        ]);
-        console.log(array2D);
-
-        // if (nifti.hasExtension(niftiHeader)) {
-        //     niftiExt = nifti.readExtensionData(niftiHeader, data);
-        //     console.log(niftiExt)
-        // }
-
-        var logger = document.getElementById("results");
-        logger.innerText = niftiHeader.toFormattedString();
-      }
-
-      function makeSlice(file, start, length) {
-        var fileType = typeof File;
-
-        if (fileType === "undefined") {
-          return function () {};
-        }
-
-        if (File.prototype.slice) {
-          return file.slice(start, start + length);
-        }
-
-        if (File.prototype.mozSlice) {
-          return file.mozSlice(start, length);
-        }
-
-        if (File.prototype.webkitSlice) {
-          return file.webkitSlice(start, length);
-        }
-
-        return null;
-      }
-
-      function readFile(file) {
-        console.log(file.size);
-        // var blob = makeSlice(file, 0, file.size);
-
-        var reader = new FileReader();
-
-        reader.onloadend = function (evt) {
-          if (evt.target.readyState === FileReader.DONE) {
-            readNIFTI(file.name, evt.target.result);
-          }
-        };
-
-        reader.readAsArrayBuffer(file);
-      }
-
-      function handleFileSelect(evt) {
-        var files = evt.target.files;
-        readFile(files[0]);
-      } -->
-    <!-- </script> -->
-
     <title>NIFTI-Reader-JS Test</title>
   </head>
 
@@ -119,15 +22,21 @@
     </div>
 
     <div id="results" style="font-family: sans-serif"></div>
-
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/nicolaspanel/numjs@0.15.1/dist/numjs.min.js"></script>
     <script type="module">
       // import { handleFileSelect } from './try.js';
       import ns from "https://cdn.jsdelivr.net/gh/stdlib-js/ndarray@esm/index.mjs";
+      // import nj from "https://cdn.jsdelivr.net/gh/nicolaspanel/numjs@0.15.1/dist/numjs.min.js"
       import "./nifti-reader-min.js";
       console.log(nifti);
       console.log(ns);
+      console.log(nj)
+      // console.log(nj.array)\
 
-      function readNIFTI(name, data) {
+      var arrayTry
+
+      async function readNIFTI(name, data) {
         if (nifti.isCompressed(data)) {
           data = nifti.decompress(data);
         }
@@ -142,19 +51,139 @@
         console.log(niftiHeader.toFormattedString());
         var niftiImage = nifti.readImage(niftiHeader, data);
         console.log(niftiImage);
-        const dataArray = new Int8Array(niftiImage);
+
+        // convert uploaded nifti data to array
+        const dataArray = new Uint8Array(niftiImage);
         console.log(dataArray);
         console.log(dataArray.length);
 
-        const array2D = ns.ndarray('int8',dataArray,[niftiHeader.dims[1],niftiHeader.dims[2],niftiHeader.dims[3]], [1,1,1], 0, 'row-major');
-        console.log(array2D);
+        // convert nifti data to ndarray
+        // with numjs library
 
-        console.log(array2D.get(4,2,2))
+        var img = nj.uint8(dataArray).reshape([niftiHeader.dims[1],niftiHeader.dims[2],niftiHeader.dims[3]])
+        
+        // TODO : Get dimensions of required model using config.dt
+        var sizes = [64,64,40];
+        var required_dims = [sizes[0], sizes[1], niftiHeader.dims[3]];
 
-        // if (nifti.hasExtension(niftiHeader)) {
-        //     niftiExt = nifti.readExtensionData(niftiHeader, data);
-        //     console.log(niftiExt)
+        // rescale to dimensions of model
+        
+        let img_resized = nj.zeros(required_dims, 'uint8');
+
+        for(let x = 0; x<img.shape[2]; x++)
+        {
+          var img_slice = img.slice(null, null, [x,x+1]).clone()
+          var resizedChannel = nj.images.resize(img_slice.reshape([niftiHeader.dims[1],niftiHeader.dims[2]]), sizes[0], sizes[1]);       
+          img_resized.slice(null, null, [x,x+1]).assign(resizedChannel.reshape([sizes[0], sizes[1], 1]), false)
+          // console.log("img sum: ", img_slice.sum(),img_slice )
+          // console.log("resized img", img_resized.slice(null, null, [x,x+1]).sum())
+          // if (resizedChannel.sum()>0 || img_resized.slice(null, null, [x,x+1]).sum()>0)
+          // {
+          //     console.log(resizedChannel)
+          //     console.log(resizedChannel.sum())
+
+          //     console.log(img_resized.slice(null, null, [x,x+1]))
+          //     console.log(img_resized.slice(null, null, [x,x+1]).sum())
+
+
+          // }
+
+          // if(x>10)
+          //     {
+          //       break;
+          //     }
+
+        }
+
+        img = img_resized
+        img_resized = nj.zeros(sizes, 'uint8')
+        for(let x = img.shape[1]/2; x<img.shape[1]; x++)
+        {
+          var img_slice = img.slice(null, [x,x+1], null).clone()
+          var resizedChannel = nj.images.resize(img_slice.reshape([sizes[0],niftiHeader.dims[3]]), sizes[0], sizes[2]);
+          img_resized.slice(null, [x,x+1], null).assign(resizedChannel.reshape([sizes[0],1, sizes[2]]), false)
+
+          // if (resizedChannel.sum()>0 || img_resized.slice(null, null, [x,x+1]).sum()>0)
+          // // {
+          //     console.log(resizedChannel)
+          //     console.log(resizedChannel.sum())
+
+          //     console.log(img_resized.slice(null, [x,x+1], null))
+          //     console.log(img_slice.sum())
+
+
+          // }
+
+          // if(x>10) break;
+          //     {
+          //       break;
+          //     }
+        }
+
+        console.log(img_resized)
+
+        // z normalization
+
+        img_resized = img_resized.reshape([1, sizes[0], sizes[1], sizes[2]])
+        var sum = img_resized.sum()
+        sum = 7
+        console.log("sum: ", sum)
+        // if (sum > 0)
+        // {
+        //     var mean = img_resized.mean()
+        //     var std = img_resized.std()
+        //     std = 1
+        //     console.log("mean: ", mean)
+        //     console.log("std: ", std)
+        //     img_resized = (img_resized - mean)/std
         // }
+
+        // min max scaling
+        // var minm = img_resized.min()
+        // var maxm = img_resized.max()
+        // maxm = 7
+
+        // img_resized = (img_resized-minm)/(maxm - minm)
+        // img_resized = img_resized.reshape([1, sizes[0], sizes[1], sizes[2]], 1)
+
+        // prediction with onnx model
+        console.log("before conversion: ", img_resized)
+
+        const myOrtSession = await ort.InferenceSession.create(
+          "nca_model_lungs2.onnx" // MODIFY : MODEL NAME
+        );
+        window.arrayTry = img_resized
+        console.log(img_resized.data)
+
+        var arr = new Float32Array(img_resized.selection.data)
+        console.log(arr)
+        // const input0 = new ort.Tensor(
+        //   'uint8', img_resized.selection.data,
+        //   [1, 64, 64, 40, 1]
+        // )
+
+        const input0 = new ort.Tensor(
+          'float32', arr,
+          [1, 64, 64, 40, 1]
+        )
+
+        const outputs = await myOrtSession.run({
+          'x.1': input0,
+          // 'fire_rate' : f2
+        })
+        // consume the output
+        // const outputTensor = outputs["17"];
+        const outputTensor = outputs["3654"]
+        console.log(`model output : ${outputTensor}`)
+        console.log(`model output tensor: ${outputTensor.data}.`);
+
+        const keys = Object.keys(outputTensor);
+        console.log(keys);
+
+        // dims, type, data, size
+
+        console.log(`${outputTensor.dims}, ${outputTensor.type}, ${outputTensor.size}`)
+
 
         var logger = document.getElementById("results");
         logger.innerText = niftiHeader.toFormattedString();
