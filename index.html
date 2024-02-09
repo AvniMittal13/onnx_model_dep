@@ -1,51 +1,29 @@
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html>
 
 <head>
-    <!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> -->
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <meta charset="utf-8" />
+    <title>M3D-NCA Segmentations</title>
 
     <!-- mobile responsive meta -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
     <!-- Slick Carousel -->
-    <link rel="stylesheet" href="plugins/slick/slick.css">
-    <link rel="stylesheet" href="plugins/slick/slick-theme.css">
+    <link rel="stylesheet" href="plugins/slick/slick.css" />
+    <link rel="stylesheet" href="plugins/slick/slick-theme.css" />
     <!-- FancyBox -->
-    <link rel="stylesheet" href="plugins/fancybox/jquery.fancybox.min.css">
+    <link rel="stylesheet" href="plugins/fancybox/jquery.fancybox.min.css" />
 
     <!-- Stylesheets -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet" />
 
     <!--Favicon-->
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-
-    <title>M3D-NCA</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
-
-    <style>
-        .item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    
-        canvas {
-            margin: 0 auto; /* This will center the canvas horizontally */
-        }
-    
-        input[type="range"] {
-            width: 80%; /* Adjust this width as needed */
-        }
-    </style>
-
     <div class="page-wrapper">
         <!--Main Header-->
         <nav class="navbar navbar-default">
@@ -64,13 +42,13 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <li class="active">
-                            <a href="index.html">M3D-NCA</a>
+                            <a href="#">M3D-NCA</a>
                         </li>
                         <li>
-                            <a href="https://arxiv.org/abs/2302.03473">Publication</a>
+                            <a href="https://arxiv.org/abs/2302.03473" target="_blank">Publication</a>
                         </li>
                         <li>
-                            <a href="https://github.com/MECLabTUDA/M3D-NCA">About Us</a>
+                            <a href="https://github.com/MECLabTUDA/M3D-NCA" target="_blank">About Us</a>
                         </li>
                     </ul>
                 </div>
@@ -80,33 +58,50 @@
         </nav>
         <!--End Main Header -->
 
-
-        <div id="select">
-            <h3 style="margin: 2em 0 0 0;">Select a File</h3>
-
-            <div style="display: flex; justify-content: center;">
-                <div class="file-input">
-                    <input type="file" id="file" name="files" class="file-input__input" />
-                    <label class="file-input__label" for="file"
-                        style="display: flex; justify-content: center; align-items: center;">
-                        <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="upload"
-                            class="svg-inline--fa fa-upload fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512">
-                            <path fill="currentColor"
-                                d="M296 384h-80c-13.3 0-24-10.7-24-24V192h-87.7c-17.8 0-26.7-21.5-14.1-34.1L242.3 5.7c7.5-7.5 19.8-7.5 27.3 0l152.2 152.2c12.6 12.6 3.7 34.1-14.1 34.1H320v168c0 13.3-10.7 24-24 24zm216-8v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h136v8c0 30.9 25.1 56 56 56h80c30.9 0 56-25.1 56-56v-8h136c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z">
-                            </path>
-                        </svg>
-                        Upload file
-                    </label>
+        <!--=================================
+        =            Page Slider            =
+        ==================================-->
+        <div class="hero-slider">
+            <!-- Slider Item -->
+            <div class="slider-item slide1" style="background-image: url(images/bg2.jpg)">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <!-- Slide Content Start -->
+                            <div class="content style text-center">
+                                <h2 class="text-white text-bold mb-2">M3D-NCA</h2>
+                                <p class="tag-text mb-5">
+                                    Effortlessly segment medical images in your browser using
+                                    our advanced M3D-NCA model, delivering precise and accurate
+                                    results for enhanced diagnostic insights and patient care.
+                                </p>
+                                <a href="./segmentation.html" class="btn btn-main btn-white">Start Segmnentation</a>
+                            </div>
+                            <!-- Slide Content End -->
+                        </div>
+                    </div>
                 </div>
             </div>
-
-
+            <div class="slider-item" style="background-image: url(images/doctor-looking-ct-scan.jpg)">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="content text-center style">
+                                <h2 class="text-white text-bold mb-2">M3D-NCA</h2>
+                                <p class="tag-text mb-5">
+                                    Effortlessly segment medical images in your browser using
+                                    our advanced M3D-NCA model, delivering precise and accurate
+                                    results for enhanced diagnostic insights and patient care.
+                                </p>
+                                <a href="./segmentation.html" class="btn btn-main btn-white">Start Segmnentation</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!--about section-->
-
-        
         <section class="feature-section section bg-gray">
             <div class="container">
                 <div class="row">
@@ -115,18 +110,76 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="item">
-                                        <div id="results">
-                                            <canvas id="myCanvas" width="100" height="100"></canvas><br />
-                                            <input type="range" min="1" max="100" value="50" class="slider form-control-range" id="myRange">
+                                        <div class="icon-box">
+                                            <!-- <figure>
+										<a href="#">
+											<img src="images/resource/1.png" alt="">
+										</a>
+									</figure> -->
                                         </div>
+                                        <h6>Advanced AI-Powered Segmentation</h6>
+                                        <p>
+                                            Our M3D-NCA model utilizes neural cellular automata
+                                            across multiple levels, ensuring superior segmentation
+                                            quality. Experience seamless segmentation of various
+                                            body parts, from the liver to the lungs and beyond, all
+                                            within your web browser
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="item">
-                                        <div id="results_mask">
-                                            <canvas id="myOutCanvas" width="100" height="100"></canvas><br />
-                                            <input type="range" min="1" max="100" value="50" class="slider form-control-range" id="myRangeOut">
+                                        <div class="icon-box">
+                                            <!-- <figure>
+										<a href="#">
+											<img src="images/resource/2.png" alt="">
+										</a>
+									</figure> -->
                                         </div>
+                                        <h6>
+                                            Multi-Level Refinement with Neural Cellular Automata
+                                        </h6>
+                                        <p>
+                                            Elevate your segmentation results with our sophisticated
+                                            neural cellular automata backbone, which iteratively
+                                            refines and enhances segmentation masks, ensuring
+                                            optimal accuracy and detail extraction for even the most
+                                            complex anatomical structures.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="item">
+                                        <div class="icon-box">
+                                            <!-- <figure>
+										<a href="#">
+											<img src="images/resource/3.png" alt="">
+										</a>
+									</figure> -->
+                                        </div>
+                                        <h6>Seamless Integration and Download</h6>
+                                        <p>
+                                            Download segmented outputs with ease for further
+                                            analysis or integration into medical workflows.
+                                            Compatible with various image formats, ensuring
+                                            flexibility and convenience
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="item">
+                                        <div class="icon-box">
+                                            <!-- <figure>
+										<a href="#">
+											<img src="images/resource/4.png" alt="">
+										</a>
+									</figure> -->
+                                        </div>
+                                        <h6>Privacy and Security Assurance</h6>
+                                        <p>
+                                            Uploaded images are processed on your browser securely
+                                            and are not stored beyond the segmentation process.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -135,29 +188,61 @@
                 </div>
             </div>
         </section>
-        
+        <!--End about section-->
 
-
-        <!-- <div class="container">
-            <div id="results">
-                <canvas id="myCanvas" width="100" height="100"></canvas><br />
-                <input type="range" min="1" max="100" value="50" class="slider form-control-range" id="myRange">
+        <!--testimonial-section-->
+        <section class="testimonial-section" style="background: url(images/bg1.jpg); padding: 1em">
+            <div class="container">
+                <!-- <div class="testimonial-carousel"> -->
+                <div class="slide-item">
+                    <div class="inner-box text-center">
+                        <!-- <div class="image-box">
+                        <figure>
+                            <img src="images/m3d_pipeline.png" alt="">
+                        </figure>
+                    </div> -->
+                        <figure>
+                            <img src="images/m3d_pipeline.png" alt="" style="width: 50em" />
+                        </figure>
+                    </div>
+                </div>
             </div>
+        </section>
+        <!--End testimonial-section-->
 
-            <div id="results_mask">
-                <canvas id="myOutCanvas" width="100" height="100"></canvas><br />
-                <input type="range" min="1" max="100" value="50" class="slider form-control-range" id="myRangeOut">
+        <!--footer-main-->
+        <footer class="footer-main">
+            <div class="footer-bottom">
+                <div class="container clearfix">
+                    <div class="copyright-text">
+                        <p>
+                            &copy; Copyright 2024. All Rights Reserved by
+                            <a href="#">M3D-NCA</a>
+                        </p>
+                    </div>
+                    <ul class="footer-bottom-link">
+                        <li>
+                            <a href="#">M3D-NCA</a>
+                        </li>
+                        <li>
+                            <a href="https://arxiv.org/abs/2302.03473" target="_blank">Publication</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/MECLabTUDA/M3D-NCA" target="_blank">About</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div> -->
-
-        <div class="scroll-to-top scroll-to-target" data-target=".header-top">
-            <span class="icon fa fa-angle-up"></span>
-        </div>
-
-
+        </footer>
+        <!--End footer-main-->
     </div>
+    <!--End pagewrapper-->
 
-
+    <!--Scroll to top-->
+    <div class="scroll-to-top scroll-to-target" data-target=".header-top">
+        <span class="icon fa fa-angle-up"></span>
+    </div>
+    
 
     <script src="plugins/jquery.js"></script>
     <script src="plugins/bootstrap.min.js"></script>
