@@ -71,7 +71,8 @@ async function onnxModelPrediction(dataArray) {
     
     var model_dims = [64,64,40] // MODIFY : MODEL DIMS
     const myOrtSession = await ort.InferenceSession.create(
-        "nca_model_lungs2.onnx" // MODIFY : MODEL NAME
+        // "nca_model_lungs2.onnx" // MODIFY : MODEL NAME
+        "nca_model_liver1.onnx"
         );
 
     const input0 = new ort.Tensor(
