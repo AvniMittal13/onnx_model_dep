@@ -1,5 +1,6 @@
 import "./nifti-reader-min.js";
- 
+import organData from './organData.js';
+
 function readNIFTI(name, data) {
     var canvas = document.getElementById('myCanvas');
     var canvasOut = document.getElementById('myOutCanvas')
@@ -18,7 +19,8 @@ function readNIFTI(name, data) {
     }
 
     // TODO : load model and final dimensions
-    const newDimensions = [64, 64, 40];
+    // const newDimensions = [64, 64, 40];
+    const newDimensions = selectedOptionData.required_dims
     // set up slider
     var slices = newDimensions[2];
     
@@ -69,10 +71,12 @@ function readNIFTI(name, data) {
 
 async function onnxModelPrediction(dataArray) {
     
-    var model_dims = [64,64,40] // MODIFY : MODEL DIMS
+    // var model_dims = [64,64,40] // MODIFY : MODEL DIMS
+    var model_dims = selectedOptionData.required_dims
     const myOrtSession = await ort.InferenceSession.create(
         // "nca_model_lungs2.onnx" // MODIFY : MODEL NAME
-        "nca_model_liver1.onnx"
+        // "nca_model_liver1.onnx"
+        selectedOptionData.file_name
         );
 
     const input0 = new ort.Tensor(
@@ -81,42 +85,92 @@ async function onnxModelPrediction(dataArray) {
     )
     console.log("input0: ", input0)
 
-    const outputs = await myOrtSession.run({
-        'x.1': input0,
-        // 'fire_rate' : f2
-    })
+    var input_name = selectedOptionData.input_var_name
+    var output_name = selectedOptionData.output_var_name
+
+    try {
+        const outputs = await myOrtSession.run({
+            "x.1" : input0,
+            // 'fire_rate' : f2
+        });
+
+        console.log("result obtained")
     
-    // const outputTensor = outputs["17"];
-    const outputTensor = outputs["3654"];
-    var outputTensorData = outputTensor.data;
-    console.log(`model output : ${outputTensor}`)
-    console.log(`model output tensor: ${outputTensor.data}.`);
-
-    const keys = Object.keys(outputTensor);
-    console.log(keys);
-
-    // dims, type, data, size
-    console.log(`${outputTensor.dims}, ${outputTensor.type}, ${outputTensor.size}`)
-    var outputArray = reshapeFlattenedArray(model_dims, outputTensorData)
-    console.log("resized output array dims: ", outputArray.length, outputArray[0].length, outputArray[0][0].length)
-
-    outputArray = applySigmoidAndThreshold(outputArray);
-
-
-    console.log(outputArray)
-    var canvasOut = document.getElementById('myOutCanvas');
-    var sliderOut = document.getElementById('myRangeOut');
-    var slices = model_dims[2]
-    sliderOut.max = slices - 1;
-    sliderOut.value = Math.round(slices / 2);
-    drawCanvas2(canvasOut, parseInt(sliderOut.value), model_dims, outputArray);
-
-    sliderOut.oninput = function() {
-        // drawCanvas2(canvas, parseInt(slider.value), newDimensions, resizedImageData);
+        // const outputTensor = outputs["17"];
+        const outputTensor = outputs[output_name];
+        var outputTensorData = outputTensor.data;
+        console.log(`model output : ${outputTensor}`)
+        console.log(`model output tensor: ${outputTensor.data}.`);
+    
+        const keys = Object.keys(outputTensor);
+        console.log(keys);
+    
+        // dims, type, data, size
+        console.log(`${outputTensor.dims}, ${outputTensor.type}, ${outputTensor.size}`)
+        var outputArray = reshapeFlattenedArray(model_dims, outputTensorData)
+        console.log("resized output array dims: ", outputArray.length, outputArray[0].length, outputArray[0][0].length)
+    
+        outputArray = applySigmoidAndThreshold(outputArray);
+    
+    
+        console.log(outputArray)
+        var canvasOut = document.getElementById('myOutCanvas');
+        var sliderOut = document.getElementById('myRangeOut');
+        var slices = model_dims[2]
+        sliderOut.max = slices - 1;
+        sliderOut.value = Math.round(slices / 2);
         drawCanvas2(canvasOut, parseInt(sliderOut.value), model_dims, outputArray);
-    };
+    
+        sliderOut.oninput = function() {
+            // drawCanvas2(canvas, parseInt(slider.value), newDimensions, resizedImageData);
+            drawCanvas2(canvasOut, parseInt(sliderOut.value), model_dims, outputArray);
+        };
+    
+        return outputArray
 
-    return outputArray
+    } catch (error) {
+        console.error("Error occurred while running the session:", error);
+    }
+
+
+    // const outputs = await myOrtSession.run({
+    //     "x.1" : input0,
+    //     // 'fire_rate' : f2
+    // })
+
+    // console.log("result obtained")
+    
+    // // const outputTensor = outputs["17"];
+    // const outputTensor = outputs[output_name];
+    // var outputTensorData = outputTensor.data;
+    // console.log(`model output : ${outputTensor}`)
+    // console.log(`model output tensor: ${outputTensor.data}.`);
+
+    // const keys = Object.keys(outputTensor);
+    // console.log(keys);
+
+    // // dims, type, data, size
+    // console.log(`${outputTensor.dims}, ${outputTensor.type}, ${outputTensor.size}`)
+    // var outputArray = reshapeFlattenedArray(model_dims, outputTensorData)
+    // console.log("resized output array dims: ", outputArray.length, outputArray[0].length, outputArray[0][0].length)
+
+    // outputArray = applySigmoidAndThreshold(outputArray);
+
+
+    // console.log(outputArray)
+    // var canvasOut = document.getElementById('myOutCanvas');
+    // var sliderOut = document.getElementById('myRangeOut');
+    // var slices = model_dims[2]
+    // sliderOut.max = slices - 1;
+    // sliderOut.value = Math.round(slices / 2);
+    // drawCanvas2(canvasOut, parseInt(sliderOut.value), model_dims, outputArray);
+
+    // sliderOut.oninput = function() {
+    //     // drawCanvas2(canvas, parseInt(slider.value), newDimensions, resizedImageData);
+    //     drawCanvas2(canvasOut, parseInt(sliderOut.value), model_dims, outputArray);
+    // };
+
+    // return outputArray
 
 
 }
@@ -459,8 +513,30 @@ function readFile(file) {
 }
 
 function handleFileSelect(evt) {
+    // console.log("option: ", selectedOptionValue)
+
     var files = evt.target.files;
     readFile(files[0]);
 }
+
+
+
+function toggleUploadButton() {
+    var dropdown = document.getElementById("optionsDropdown");
+    var uploadContainer = document.getElementById("uploadButtonContainer");
+    selectedOptionValue = dropdown.value;
+    selectedOptionData = organData[selectedOptionValue];
+    if (dropdown.value !== "") {
+      uploadContainer.style.display = "block";
+    } else {
+      uploadContainer.style.display = "none";
+    }
+  }
+  
+
+// console.log(selectedOptionValue)
+var selectedOptionValue = "";
+var selectedOptionData = {}
+document.getElementById("optionsDropdown").addEventListener("change", toggleUploadButton);
 
 document.getElementById('file').addEventListener('change', handleFileSelect, false);
