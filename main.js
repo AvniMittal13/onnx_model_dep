@@ -1,4 +1,5 @@
 import "./nifti-reader-min.js";
+import "./ort.min.js";
 import organData from './organData.js';
 
 function readNIFTI(name, data) {
